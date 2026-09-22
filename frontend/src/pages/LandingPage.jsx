@@ -11,13 +11,9 @@ import {
   SafetyCertificateOutlined,
   RightOutlined,
 } from '@ant-design/icons';
-import { useHealth } from '../hooks/useHealth';
-import HealthStatusCard from '../components/HealthStatusCard';
-
 const { Title, Text, Paragraph } = Typography;
 
 export default function LandingPage() {
-  const { healthData, loading, error, latency, refetch } = useHealth();
 
   return (
     <div style={{ minHeight: '80vh' }}>
@@ -173,15 +169,30 @@ export default function LandingPage() {
       </div>
 
       {/* "How it works" section */}
-      <div style={{ maxWidth: '1100px', margin: '-24px auto 40px auto', padding: '0 20px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <Title level={2} style={{ color: '#0b4f8a', marginBottom: '6px' }}>
+      <div style={{ maxWidth: '1100px', margin: '36px auto 50px auto', padding: '16px 24px 30px 24px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <Title level={2} style={{ color: '#0b4f8a', marginBottom: '10px' }}>
             How it works
           </Title>
-          <Text type="secondary" style={{ fontSize: '15px' }}>
-            <CalendarOutlined style={{ marginRight: '6px', color: '#1677ff' }} />
-            Monthly data must be submitted on or before the 5th of the following month.
-          </Text>
+          <div style={{ marginTop: '8px' }}>
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: '#f0f5ff',
+                border: '1px solid #adc6ff',
+                padding: '8px 20px',
+                borderRadius: '20px',
+                color: '#1d39c4',
+                fontSize: '14.5px',
+                fontWeight: 500,
+              }}
+            >
+              <CalendarOutlined style={{ color: '#2f54eb', fontSize: '16px' }} />
+              Monthly data must be submitted on or before the 5th of the following month.
+            </span>
+          </div>
         </div>
 
         <Row gutter={[24, 24]}>
@@ -290,17 +301,6 @@ export default function LandingPage() {
             </Card>
           </Col>
         </Row>
-
-        {/* Live Diagnostics Card */}
-        <div style={{ marginTop: '36px' }}>
-          <HealthStatusCard
-            healthData={healthData}
-            loading={loading}
-            error={error}
-            latency={latency}
-            onRefresh={refetch}
-          />
-        </div>
       </div>
     </div>
   );

@@ -789,11 +789,11 @@ pip install -r requirements.txt
 
 # District Office Login
 
-stalingalaxy@gmail.com / a?H#t7e2
+stalingalaxy@gmail.com / bCIF2gN%
 
 # Board Section Login
 
-tomgalaxytom@gmail.com / GtLA$1!6
+tomgalaxytom@gmail.com / %c9#rGWj
 
 #  Sample Table Testing
 
@@ -805,3 +805,9 @@ SELECT * FROM public.biomedical_waste_reports ORDER BY id ASC
 SELECT * FROM public.plastic_waste_reports ORDER BY id ASC
 
 SELECT * FROM public.waste_reports ORDER BY id ASC 
+
+
+
+# All Table Truncate Command
+
+TRUNCATE TABLE public.logs, public.schedules, public.ewaste_reports, public.biomedical_waste_reports, public.plastic_waste_reports, public.waste_reports, public.users RESTART IDENTITY CASCADE;

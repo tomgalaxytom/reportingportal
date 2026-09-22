@@ -61,8 +61,8 @@ The frontend uses three environment files:
 
 | Environment | File | `VITE_API_BASE` |
 |---|---|---|
-| **Local Development** | `.env` | `http://192.168.201.40:5000/api` |
-| **Production Local / Staging** | `.env.prodlocal` | `http://192.168.201.40:5000/api` |
+| **Local Development** | `.env` | `http://localhost:8000/api` |
+| **Production Local / Staging** | `.env.prodlocal` | `http://192.168.201.40:8000/api` |
 | **Production** | `.env.production` | `https://tnpcb.gov.in/whitecategory/api` |
 
 > **Note**: In components and services, never hardcode URLs. All requests access `import.meta.env.VITE_API_BASE` through `src/services/api.js`.

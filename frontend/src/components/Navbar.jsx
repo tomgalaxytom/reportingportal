@@ -26,23 +26,23 @@ export default function Navbar() {
     {
       key: '/login',
       icon: <LoginOutlined />,
-      label: <Link to="/login">Login</Link>,
+      label: <Link to="/login">Contact Us</Link>,
     },
-    {
-      key: '/district-entry',
-      icon: <FormOutlined />,
-      label: <Link to="/district-entry">District Entry</Link>,
-    },
-    {
-      key: '/board-dashboard',
-      icon: <TableOutlined />,
-      label: <Link to="/board-dashboard">Board Section</Link>,
-    },
-    {
-      key: '/health',
-      icon: <HeartOutlined />,
-      label: <Link to="/health">System Health</Link>,
-    },
+    // {
+    //   key: '/district-entry',
+    //   icon: <FormOutlined />,
+    //   label: <Link to="/district-entry">District Entry</Link>,
+    // },
+    // {
+    //   key: '/board-dashboard',
+    //   icon: <TableOutlined />,
+    //   label: <Link to="/board-dashboard">Board Section</Link>,
+    // },
+    // {
+    //   key: '/health',
+    //   icon: <HeartOutlined />,
+    //   label: <Link to="/health">System Health</Link>,
+    // },
   ];
 
   return (
@@ -91,6 +91,7 @@ export default function Navbar() {
 
         <Menu
           mode="horizontal"
+          disabledOverflow={true}
           selectedKeys={[location.pathname]}
           items={menuItems}
           style={{
@@ -98,6 +99,8 @@ export default function Navbar() {
             background: 'transparent',
             fontWeight: 500,
             justifyContent: 'flex-end',
+            minWidth: '220px',
+            flexShrink: 0,
           }}
         />
       </Header>

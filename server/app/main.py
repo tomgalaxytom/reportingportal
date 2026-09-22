@@ -8,7 +8,7 @@ from app.routers.health import router as health_router
 from app.routers.reports import router as reports_router
 from app.routers.auth import router as auth_router
 from app.routers.stream_reports import router as stream_reports_router
-import app.models.stream_reports  # Ensure models are loaded for init_db()
+import app.models  # Ensure all models (User, Log, Schedule, stream reports) are registered for init_db()
 from app.services.report_service import report_service
 from app.utils.logger import logger
 

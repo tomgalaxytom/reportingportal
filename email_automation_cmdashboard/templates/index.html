@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Automator - Dashboard</title>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i data-lucide="send"></i>
+                </div>
+                <h2>PythonMail</h2>
+            </div>
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="dashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-item" data-tab="compose">
+                    <i data-lucide="mail"></i>
+                    <span>Compose Email</span>
+                </button>
+                <button class="nav-item" data-tab="recipients">
+                    <i data-lucide="users"></i>
+                    <span>Recipients</span>
+                </button>
+                <button class="nav-item" data-tab="users">
+                    <i data-lucide="shield-check"></i>
+                    <span>Users (DB)</span>
+                </button>
+                <button class="nav-item" data-tab="schedule">
+                    <i data-lucide="calendar"></i>
+                    <span>Schedule</span>
+                </button>
+                <button class="nav-item" data-tab="logs">
+                    <i data-lucide="list-todo"></i>
+                    <span>Logs</span>
+                </button>
+                <button class="nav-item" data-tab="settings">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <p>Status: <span class="server-status-online">Online</span></p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- HEADER -->
+            <header class="app-header">
+                <div class="header-left">
+                    <h1 id="page-title">Dashboard</h1>
+                    <p class="current-date" id="header-date"></p>
+                </div>
+                <div class="header-right">
+                    <div class="smtp-indicator" id="smtp-status-indicator">
+                        <span class="indicator-dot red"></span>
+                        <span id="smtp-status-text">SMTP Not Configured</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- TOAST NOTIFICATION CONTAINER -->
+            <div id="toast-container" class="toast-container"></div>
+
+            <!-- TAB CONTENT PANELS -->
+            <div class="tab-panels">
+                
+                <!-- 1. DASHBOARD TAB -->
+                <section id="panel-dashboard" class="tab-panel active">
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-label">Total Emails Sent</span>
+                                <div class="stat-icon-wrapper sent">
+                                    <i data-lucide="send"></i>
+                                </div>
+                            </div>
+                            <h3 id="stat-sent" class="stat-number">0</h3>
+                            <p class="stat-subtext">Cumulative campaigns</p>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-label">Delivered</span>
+                                <div class="stat-icon-wrapper delivered">
+                                    <i data-lucide="check-circle-2"></i>
+                                </div>
+                            </div>
+                            <h3 id="stat-delivered" class="stat-number">0</h3>
+                            <p class="stat-subtext"><span id="stat-delivered-pct" class="pct-badge success">0%</span> success rate</p>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-label">Pending Queue</span>
+                                <div class="stat-icon-wrapper pending">
+                                    <i data-lucide="clock"></i>
+                                </div>
+                            </div>
+                            <h3 id="stat-pending" class="stat-number">0</h3>
+                            <p class="stat-subtext"><span id="stat-pending-pct" class="pct-badge warning">0%</span> scheduled</p>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-label">Failed Deliveries</span>
+                                <div class="stat-icon-wrapper failed">
+                                    <i data-lucide="alert-triangle"></i>
+                                </div>
+                            </div>
+                            <h3 id="stat-failed" class="stat-number">0</h3>
+                            <p class="stat-subtext"><span id="stat-failed-pct" class="pct-badge danger">0%</span> error rate</p>
+                        </div>
+                    </div>
+
+                    <!-- Main Section -->
+                    <div class="dashboard-details">
+                        <!-- Quick Stats Chart & Details -->
+                        <div class="dashboard-card detailed-log-card">
+                            <div class="card-header">
+                                <h3>Delivery Overview</h3>
+                                <button class="btn btn-outline" onclick="window.location.reload()"><i data-lucide="refresh-cw"></i> Refresh</button>
+                            </div>
+                            <div class="card-body">
+                                <div class="progress-bar-container">
+                                    <div class="progress-label">
+                                        <span>Delivered Emails</span>
+                                        <span id="progress-del-text">0/0</span>
+                                    </div>
+                                    <div class="progress-track">
+                                        <div id="progress-delivered-fill" class="progress-fill delivered-fill" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-label">
+                                        <span>Failed Emails</span>
+                                        <span id="progress-fail-text">0/0</span>
+                                    </div>
+                                    <div class="progress-track">
+                                        <div id="progress-failed-fill" class="progress-fill failed-fill" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="placeholder-tip">
+                                    <i data-lucide="sparkles"></i>
+                                    <p>Configure SMTP settings, upload your recipient list, write your templates, and launch your personalized bulk marketing campaigns instantly or at scheduled times.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Schedules Quick View -->
+                        <div class="dashboard-card quick-schedules-card">
+                            <div class="card-header">
+                                <h3>Active Schedules</h3>
+                                <button class="btn btn-link" onclick="switchTab('schedule')">Manage All</button>
+                            </div>
+                            <div class="card-body">
+                                <div class="schedule-quick-list" id="quick-schedules-list">
+                                    <div class="empty-state">
+                                        <i data-lucide="calendar-days"></i>
+                                        <p>No active scheduled campaigns.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. COMPOSE EMAIL TAB -->
+                <section id="panel-compose" class="tab-panel">
+                    <div class="compose-grid">
+                        
+                        <!-- Left Panel: Compose Area -->
+                        <div class="dashboard-card compose-form-card">
+                            <div class="card-header">
+                                <div>
+                                    <h3>Compose Campaign Email</h3>
+                                    <p class="card-subtitle">Personalize templates with CSV placeholders & auto-generated credentials.</p>
+                                </div>
+                                <button type="button" class="btn btn-outline btn-xs" onclick="loadOfficerTemplate()">
+                                    <i data-lucide="sparkles"></i> Load Officer Credentials Template
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <!-- Subject -->
+                                <div class="form-group">
+                                    <label for="compose-subject">Subject Line</label>
+                                    <input type="text" id="compose-subject" placeholder="e.g. Portal Login Credentials - {district_name}" value="Portal Login Credentials - {district_name}" required>
+                                </div>
+
+                                <!-- Body -->
+                                <div class="form-group">
+                                    <div class="label-with-helper">
+                                        <label for="compose-body">Email Body (HTML/Text)</label>
+                                        <div class="placeholder-helpers">
+                                            <span>Insert placeholder:</span>
+                                            <button type="button" class="helper-badge" onclick="insertPlaceholder('{district_name}')">{district_name}</button>
+                                            <button type="button" class="helper-badge" onclick="insertPlaceholder('{officer_email}')">{officer_email}</button>
+                                            <button type="button" class="helper-badge" onclick="insertPlaceholder('{password}')">{password}</button>
+                                            <button type="button" class="helper-badge" onclick="insertPlaceholder('{role}')">{role}</button>
+                                            <button type="button" class="helper-badge" onclick="insertPlaceholder('{username}')">{username}</button>
+                                        </div>
+                                    </div>
+                                    <textarea id="compose-body" rows="15" required><div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);">
+    <!-- Header Banner -->
+    <div style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); padding: 28px 24px; text-align: center;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px;">Tamil Nadu Pollution Control Board</h1>
+        <p style="color: #dbeafe; margin: 6px 0 0 0; font-size: 14px; font-weight: 500;">Officer Portal Access & Credentials</p>
+    </div>
+
+    <!-- Body Content -->
+    <div style="padding: 28px 24px;">
+        <p style="font-size: 15px; color: #1e293b; margin-top: 0; line-height: 1.6;">Dear Officer,</p>
+        <p style="font-size: 14px; color: #475569; line-height: 1.6;">Your official officer account has been provisioned successfully for <strong>{district_name}</strong> district with role <span style="background-color: #f1f5f9; color: #0f172a; padding: 2px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase;">{role}</span>.</p>
+        <p style="font-size: 14px; color: #475569; line-height: 1.6;">Please use the login credentials listed in the table below to access your portal account:</p>
+
+        <!-- Stylish Credentials Table -->
+        <table style="width: 100%; border-collapse: separate; border-spacing: 0; margin: 20px 0; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden;">
+            <thead>
+                <tr style="background-color: #f8fafc;">
+                    <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #64748b; border-bottom: 2px solid #e2e8f0; text-transform: uppercase; letter-spacing: 0.5px;">Field</th>
+                    <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #64748b; border-bottom: 2px solid #e2e8f0; text-transform: uppercase; letter-spacing: 0.5px;">Account Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="background-color: #ffffff;">
+                    <td style="padding: 12px 16px; font-size: 14px; font-weight: 600; color: #334155; border-bottom: 1px solid #e2e8f0; width: 35%;">District Name</td>
+                    <td style="padding: 12px 16px; font-size: 14px; color: #0f172a; font-weight: 600; border-bottom: 1px solid #e2e8f0;">{district_name}</td>
+                </tr>
+                <tr style="background-color: #f8fafc;">
+                    <td style="padding: 12px 16px; font-size: 14px; font-weight: 600; color: #334155; border-bottom: 1px solid #e2e8f0;">Assigned Role</td>
+                    <td style="padding: 12px 16px; font-size: 14px; color: #2563eb; font-weight: 600; border-bottom: 1px solid #e2e8f0; text-transform: uppercase;">{role}</td>
+                </tr>
+                <tr style="background-color: #ffffff;">
+                    <td style="padding: 12px 16px; font-size: 14px; font-weight: 600; color: #334155; border-bottom: 1px solid #e2e8f0;">Username / Email</td>
+                    <td style="padding: 12px 16px; font-size: 14px; color: #1e40af; font-family: Consolas, Monaco, monospace; font-weight: 600; border-bottom: 1px solid #e2e8f0;">{officer_email}</td>
+                </tr>
+                <tr style="background-color: #eff6ff;">
+                    <td style="padding: 12px 16px; font-size: 14px; font-weight: 700; color: #1e3a8a;">System Password</td>
+                    <td style="padding: 12px 16px;">
+                        <span style="display: inline-block; background-color: #2563eb; color: #ffffff; font-family: Consolas, Monaco, monospace; font-size: 15px; font-weight: 700; letter-spacing: 1.5px; padding: 6px 14px; border-radius: 6px; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);">{password}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Security Advisory Box -->
+        <div style="background-color: #fffbeb; border: 1px solid #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 6px; margin: 20px 0;">
+            <p style="margin: 0; font-size: 13px; color: #92400e; line-height: 1.5;">
+                <strong>Security Notice:</strong> This is an auto-generated temporary password. For security purposes, please log in and change your password immediately upon your initial sign-in.
+            </p>
+        </div>
+
+        <p style="font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 0;">
+            Best Regards,<br>
+            <strong style="color: #1e293b;">TNPCB Administration & Technical Team</strong>
+        </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="background-color: #f8fafc; padding: 16px 24px; border-top: 1px solid #e2e8f0; text-align: center;">
+        <p style="margin: 0; font-size: 12px; color: #94a3b8;">This is an automated system notification. Please do not reply directly to this email.</p>
+    </div>
+</div></textarea>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="form-actions">
+                                    <button class="btn btn-primary" id="btn-send-now" onclick="triggerSendNow()">
+                                        <i data-lucide="send"></i> Send Now (Auto Hash & Save)
+                                    </button>
+                                    <button class="btn btn-secondary" id="btn-open-schedule" onclick="openScheduleModal()">
+                                        <i data-lucide="calendar"></i> Schedule Campaign
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Recipients Upload -->
+                        <div class="dashboard-card recipients-upload-card">
+                            <div class="card-header">
+                                <h3>Target Recipients (CSV)</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="csv-upload-box" id="csv-drop-zone">
+                                    <i data-lucide="file-spreadsheet" class="upload-icon"></i>
+                                    <p class="upload-title">Upload Recipients CSV</p>
+                                    <p class="upload-subtitle">Format: id, district_name, officer_email, role</p>
+                                    <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
+                                    <button class="btn btn-outline btn-upload" onclick="document.getElementById('csv-file-input').click()">
+                                        Upload CSV
+                                    </button>
+                                </div>
+
+                                <!-- Upload File Stats Card -->
+                                <div class="file-stats-box" id="file-stats-box" style="display: none;">
+                                    <div class="file-name-row">
+                                        <i data-lucide="file-check-2" class="success-icon"></i>
+                                        <span id="file-stats-name" class="file-name">recipients.csv</span>
+                                        <button class="btn-clear-file" onclick="clearUploadedCSV()">&times;</button>
+                                    </div>
+                                    <div class="file-metrics-grid four-cols">
+                                        <div class="metric-item">
+                                            <span class="metric-val" id="file-total-recipients">0</span>
+                                            <span class="metric-lbl">Total</span>
+                                        </div>
+                                        <div class="metric-item">
+                                            <span class="metric-val text-success" id="file-valid-emails">0</span>
+                                            <span class="metric-lbl">New (Valid)</span>
+                                        </div>
+                                        <div class="metric-item">
+                                            <span class="metric-val text-warning" id="file-existing-emails">0</span>
+                                            <span class="metric-lbl">In DB (Skipped)</span>
+                                        </div>
+                                        <div class="metric-item">
+                                            <span class="metric-val text-danger" id="file-invalid-emails">0</span>
+                                            <span class="metric-lbl">Invalid</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="csv-template-download">
+                                    <p>Sample CSV with officer columns: <code>id,district_name,officer_email,role</code></p>
+                                    <button class="btn btn-link btn-xs" onclick="downloadSampleCSV()">
+                                        <i data-lucide="download"></i> Download Officer Sample CSV
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Schedule Configuration Modal -->
+                    <div id="schedule-modal" class="modal-overlay" style="display: none;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>Schedule Campaign Execution</h3>
+                                <button class="close-modal" onclick="closeScheduleModal()">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="sched-name">Campaign Name</label>
+                                    <input type="text" id="sched-name" placeholder="e.g. Weekly Promo Flight" value="My Scheduled Campaign">
+                                </div>
+                                <div class="form-group">
+                                    <label for="sched-type">Schedule Type</label>
+                                    <select id="sched-type" onchange="toggleScheduleTimeFields()">
+                                        <option value="once">Send Once (One-Off)</option>
+                                        <option value="daily">Send Daily (Recurring)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="group-sched-datetime">
+                                    <label for="sched-datetime">Select Target Date & Time</label>
+                                    <input type="datetime-local" id="sched-datetime">
+                                </div>
+                                <div class="form-group" id="group-sched-time" style="display: none;">
+                                    <label for="sched-time">Select Daily Run Time</label>
+                                    <input type="time" id="sched-time" value="09:00">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-outline" onclick="closeScheduleModal()">Cancel</button>
+                                <button class="btn btn-primary" onclick="submitScheduleCampaign()">
+                                    <i data-lucide="calendar-range"></i> Schedule Email
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. RECIPIENTS TAB -->
+                <section id="panel-recipients" class="tab-panel">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <div>
+                                <h3>CSV Recipient List Viewer</h3>
+                                <span class="card-subtitle" id="recipient-table-subtitle">Upload a CSV in "Compose Email" tab to view target list</span>
+                            </div>
+                        </div>
+                        <div class="card-body scrollable-table-container">
+                            <table class="data-table" id="recipients-table">
+                                <thead>
+                                    <tr>
+                                        <th>District Name</th>
+                                        <th>Officer Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recipients-table-body">
+                                    <tr>
+                                        <td colspan="5" class="text-center empty-table">
+                                            <i data-lucide="users-2"></i>
+                                            <p>No recipient data loaded. Please upload a CSV on the Compose Email screen first.</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. USERS (DATABASE) TAB -->
+                <section id="panel-users" class="tab-panel">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Registered Portal Users (PostgreSQL DB)</h3>
+                                <p class="card-subtitle">Officer accounts created in the <code>users</code> table with bcrypt-encrypted passwords.</p>
+                            </div>
+                            <button class="btn btn-outline btn-xs" onclick="fetchUsers()"><i data-lucide="refresh-cw"></i> Refresh Users</button>
+                        </div>
+                        <div class="card-body scrollable-table-container">
+                            <table class="data-table" id="users-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>District Name</th>
+                                        <th>Officer Email</th>
+                                        <th>Role</th>
+                                        <th>Password (Bcrypt Hash)</th>
+                                        <th>Created At</th>
+                                        <th class="text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table-body">
+                                    <tr>
+                                        <td colspan="7" class="text-center empty-table">
+                                            <i data-lucide="shield-alert"></i>
+                                            <p>No users found in PostgreSQL database. Upload CSV and send emails to auto-create user accounts.</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. SCHEDULE TAB -->
+                <section id="panel-schedule" class="tab-panel">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>Scheduled Automations & Campaigns</h3>
+                        </div>
+                        <div class="card-body scrollable-table-container">
+                            <table class="data-table" id="schedules-table">
+                                <thead>
+                                    <tr>
+                                        <th>Campaign Name</th>
+                                        <th>Subject Line</th>
+                                        <th>Type</th>
+                                        <th>Schedule Time</th>
+                                        <th>Next Execution</th>
+                                        <th>Last Execution</th>
+                                        <th>Status</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="schedules-table-body">
+                                    <tr>
+                                        <td colspan="8" class="text-center empty-table">
+                                            <i data-lucide="calendar"></i>
+                                            <p>No scheduled tasks. Go to "Compose Email" to set up a scheduled campaign.</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. LOGS TAB -->
+                <section id="panel-logs" class="tab-panel">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>Email Delivery History & Error Logging</h3>
+                            <button class="btn btn-outline btn-xs" onclick="clearLogsUI()"><i data-lucide="trash-2"></i> Refresh / Reload</button>
+                        </div>
+                        <div class="card-body scrollable-table-container">
+                            <table class="data-table" id="logs-table">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Recipient</th>
+                                        <th>Email Address</th>
+                                        <th>Subject</th>
+                                        <th>Status</th>
+                                        <th>Log Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="logs-table-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center empty-table">
+                                            <i data-lucide="list-collapse"></i>
+                                            <p>No logs found. Transmit a mailing job to initialize logs.</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. SETTINGS TAB -->
+                <section id="panel-settings" class="tab-panel">
+                    <div class="settings-grid">
+                        <div class="dashboard-card settings-card">
+                            <div class="card-header">
+                                <h3>SMTP Server Configuration</h3>
+                                <p class="card-subtitle">Provide details to securely route automated emails through your chosen server credentials.</p>
+                            </div>
+                            <div class="card-body">
+                                <form id="smtp-settings-form" onsubmit="saveSMTPSettings(event)">
+                                    <div class="settings-section-title">
+                                        <h4>SMTP Server Configuration</h4>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group flex-2">
+                                            <label for="smtp-server">SMTP Server Host</label>
+                                            <input type="text" id="smtp-server" placeholder="e.g. smtp.gmail.com" required>
+                                        </div>
+                                        <div class="form-group flex-1">
+                                            <label for="smtp-port">SMTP Port</label>
+                                            <input type="number" id="smtp-port" placeholder="e.g. 587" value="587" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group flex-1">
+                                            <label for="smtp-email">Sender Email Address</label>
+                                            <input type="email" id="smtp-email" placeholder="e.g. automation@example.com" required>
+                                        </div>
+                                        <div class="form-group flex-1">
+                                            <label for="smtp-password">SMTP App Password / Credentials</label>
+                                            <input type="password" id="smtp-password" placeholder="••••••••••••" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group flex-1">
+                                            <label for="smtp-from-name">Default From Name</label>
+                                            <input type="text" id="smtp-from-name" placeholder="e.g. Spark Automation Team" value="Email Automation Tool">
+                                        </div>
+                                        <div class="form-group flex-1 checkbox-group">
+                                            <label class="checkbox-container">
+                                                <input type="checkbox" id="smtp-tls" checked>
+                                                <span class="checkmark"></span>
+                                                Use STARTTLS (Secure Connection)
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="settings-divider"></div>
+
+                                    <div class="settings-section-title">
+                                        <h4>PostgreSQL Database Connection</h4>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group flex-2">
+                                            <label for="db-host">Database Server Host</label>
+                                            <input type="text" id="db-host" placeholder="e.g. localhost" required>
+                                        </div>
+                                        <div class="form-group flex-1">
+                                            <label for="db-port">Database Port</label>
+                                            <input type="number" id="db-port" placeholder="e.g. 5432" value="5432" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group flex-1">
+                                            <label for="db-name">Database Name</label>
+                                            <input type="text" id="db-name" placeholder="e.g. email_automation" required>
+                                        </div>
+                                        <div class="form-group flex-1">
+                                            <label for="db-user">Database Username</label>
+                                            <input type="text" id="db-user" placeholder="e.g. postgres" required>
+                                        </div>
+                                        <div class="form-group flex-1">
+                                            <label for="db-password">Database Password</label>
+                                            <input type="password" id="db-password" placeholder="••••••••••••">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-actions settings-actions">
+                                        <button type="button" class="btn btn-outline" onclick="testPostgresConnection()">
+                                            <i data-lucide="database"></i> Test DB Connection
+                                        </button>
+                                        <button type="button" class="btn btn-outline" onclick="testSMTPConnection()">
+                                            <i data-lucide="shield-check"></i> Test SMTP Settings
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i data-lucide="save"></i> Save Configuration
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Info/Help Panel -->
+                        <div class="dashboard-card info-card">
+                            <div class="card-header">
+                                <h3>SMTP Guidelines</h3>
+                            </div>
+                            <div class="card-body help-body">
+                                <h4>Gmail Setup</h4>
+                                <ol>
+                                    <li>Navigate to your Google Account > Security.</li>
+                                    <li>Enable **2-Step Verification**.</li>
+                                    <li>Search for **App Passwords**.</li>
+                                    <li>Create an App Password for 'Mail', copy the 16-character code, and use it as your password above.</li>
+                                </ol>
+                                
+                                <h4>Common Ports</h4>
+                                <ul>
+                                    <li><strong>587</strong>: Port for STARTTLS (recommended).</li>
+                                    <li><strong>465</strong>: Port for SSL.</li>
+                                    <li><strong>25</strong>: Unencrypted SMTP.</li>
+                                </ul>
+
+                                <h4>Template Engine Keys</h4>
+                                <p>You can reference any columns from your CSV in your subject or body template using braces. For example, if your CSV columns are: <code>name</code>, <code>email</code>, <code>city</code>, use placeholders like: <code>{name}</code>, <code>{city}</code>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/main.js"></script>
+</body>
+</html>

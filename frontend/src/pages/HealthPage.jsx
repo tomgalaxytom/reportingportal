@@ -29,14 +29,14 @@ export default function HealthPage() {
       env: 'Local Development',
       command: 'npm run dev',
       outDir: 'In-memory (Vite dev)',
-      apiBase: 'http://192.168.201.40:5000/api',
+      apiBase: 'http://192.168.201.40:8000/api',
     },
     {
       key: 'prodlocal',
       env: 'Production Local / Staging',
       command: 'npm run build:prodlocal',
       outDir: 'frontend/prodlocal/',
-      apiBase: 'http://192.168.201.40:5000/api',
+      apiBase: 'http://192.168.201.40:8000/api',
     },
     {
       key: 'production',
