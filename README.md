@@ -441,3 +441,367 @@ The root `.gitignore` protects all sensitive credentials and environment files f
 - Python caches (`__pycache__/`, `.pytest_cache/`, `*.pyc`) and `venv/` are excluded.
 - Node modules (`node_modules/`) are excluded.
 - Safe templates (`.env.example`) are provided with non-sensitive placeholder values.
+
+
+
+#   New System project Integration
+
+ஆம். 👍 node_modules GitHub-ல் push செய்யாமல் இருப்பது correct approach. மற்ற system-ல் project clone செய்த பிறகு dependencies-ஐ மீண்டும் install செய்து run செய்ய வேண்டும்.
+
+உங்கள் project:
+
+reportingportal/
+├── frontend/       ← React + Vite
+├── server/         ← Python
+├── README.md
+└── .gitignore
+
+மற்ற system-ல் complete setup இதுதான்.
+
+# 1. GitHub-ல் இருந்து project clone
+
+மற்ற system-ல் CMD திறக்கவும்:
+
+cd D:\xampp\htdocs
+
+பிறகு:
+
+git clone https://github.com/tomgalaxytom/reportingportal.git
+
+அது:
+
+D:\xampp\htdocs\reportingportal
+
+என்று உருவாகும்.
+
+cd reportingportal
+
+# 2. முதலில் project structure check
+dir
+
+இப்படி இருக்க வேண்டும்:
+
+frontend
+server
+README.md
+.gitignore
+
+# 3. React node_modules உருவாக்க வேண்டும்
+
+GitHub-ல் node_modules இல்லாதது correct.
+
+cd frontend
+
+முதலில் Node.js இருக்கிறதா:
+
+node --version
+
+npm இருக்கிறதா:
+
+npm --version
+
+பிறகு:
+
+npm install
+
+இதனால்:
+
+frontend/
+├── node_modules/       ← இப்போது local-ல் உருவாகும்
+├── package.json
+├── package-lock.json
+└── src/
+
+package-lock.json இருப்பதால் dependencies சரியான versions-ல் install ஆகும்.
+
+# 4. React run செய்யுங்கள்
+npm run dev
+
+Expected:
+
+VITE ... ready
+
+Local: http://localhost:5173/
+
+Browser:
+
+http://localhost:5173
+⚠️ ஆனால் backend இன்னும் run ஆகவில்லை
+
+React API calls backend-க்கு போகும்.
+
+அதனால் backend-யும் run செய்ய வேண்டும்.
+
+  # 5. Python environment setup
+
+New system-ல் Python இருக்கிறதா:
+
+py --version
+
+அல்லது:
+
+python --version
+
+பிறகு root-க்கு:
+
+cd ..
+cd server
+Virtual environment create
+py -m venv venv
+
+இதனால்:
+
+server/
+├── venv/          ← local machine மட்டும்
+├── app/
+├── requirements.txt
+└── run.py
+
+# 6. Python venv activate
+
+Windows:
+
+venv\Scripts\activate
+
+Activated என்றால் CMD-ல்:
+
+(venv) D:\xampp\htdocs\reportingportal\server>
+
+போல் வரும்.
+
+# 7. Python dependencies install
+pip install -r requirements.txt
+
+இதுதான் GitHub-ல் venv push செய்யாததற்கான reason.
+
+GitHub:
+
+requirements.txt
+
+மட்டும் வைத்திருக்கிறோம்.
+
+New PC:
+
+requirements.txt
+       ↓
+pip install -r requirements.txt
+       ↓
+venv/
+
+# 8. .env create செய்ய வேண்டும்
+
+இது மிகவும் முக்கியம்.
+
+நாம் .env-ஐ GitHub-ல் push செய்யவில்லை.
+
+உங்களிடம்:
+
+server/.env.example
+
+இருக்கிறது.
+
+அதை copy செய்து:
+
+server/.env
+
+உருவாக்குங்கள்.
+
+CMD:
+
+copy .env.example .env
+
+பிறகு .env-ல் அந்த system-க்கு தேவையான:
+
+DATABASE_URL
+JWT_SECRET
+...
+
+values கொடுக்க வேண்டும்.
+
+# 9. PostgreSQL database setup
+
+உங்கள் backend PostgreSQL பயன்படுத்தினால், புதிய system-ல்:
+
+PostgreSQL
+    ↓
+Create reportingportal database
+    ↓
+Import SQL
+    ↓
+server/.env
+    ↓
+DATABASE_URL
+
+என்று setup செய்ய வேண்டும்.
+
+உதாரணமாக .env:
+
+DATABASE_URL=postgresql://postgres:password@localhost:5432/reportingportal
+
+Actual password-ஐ GitHub-ல் வைக்கக்கூடாது.
+
+  # 10. PM2 மூலம் Python backend run
+
+உங்கள் server folder-ல் ecosystem.config.js already உள்ளது.
+
+server/
+├── ecosystem.config.js
+├── run.py
+├── requirements.txt
+└── app/
+
+முதலில் PM2 install செய்யப்பட்டுள்ளதா:
+
+pm2 --version
+
+இல்லையென்றால்:
+
+npm install -g pm2
+
+பிறகு:
+
+cd server
+PM2 start
+pm2 start ecosystem.config.js
+
+Check:
+
+pm2 status
+
+Logs:
+
+pm2 logs
+
+# 11. Backend manually test
+
+PM2 மூலம் start செய்த பிறகு உங்கள் FastAPI endpoint இருந்தால் browser-ல்:
+
+http://localhost:8000
+
+அல்லது உங்கள் health endpoint:
+
+http://localhost:8000/health
+
+check செய்யலாம்.
+
+உங்கள் ecosystem.config.js எந்த port-ஐ பயன்படுத்துகிறது என்பதை அதில் check செய்யுங்கள்.
+
+# 12. React + Python இரண்டையும் run செய்வது
+
+Development-ல் இரண்டு CMD windows வைத்துக்கொள்ளலாம்.
+
+CMD 1 — Backend
+cd D:\xampp\htdocs\reportingportal\server
+venv\Scripts\activate
+pm2 start ecosystem.config.js
+pm2 status
+CMD 2 — React
+cd D:\xampp\htdocs\reportingportal\frontend
+npm run dev
+
+பிறகு:
+
+React
+http://localhost:5173
+       ↓
+FastAPI
+http://localhost:8000
+       ↓
+PostgreSQL
+localhost:5432
+# ⭐ New System Setup — Short Version
+
+ஒரு புதிய computer-ல் project run செய்யும்போது:
+
+git clone https://github.com/tomgalaxytom/reportingportal.git
+
+cd reportingportal\frontend
+npm install
+
+பிறகு backend:
+
+cd ..\server
+
+py -m venv venv
+
+venv\Scripts\activate
+
+pip install -r requirements.txt
+
+.env:
+
+copy .env.example .env
+
+பிறகு DB setup.
+
+PM2:
+
+pm2 start ecosystem.config.js
+
+React:
+
+cd ..\frontend
+npm run dev
+# 🔥 உங்கள் project-ன் முழு flow
+             GitHub
+                │
+                │ git clone
+                ↓
+       reportingportal/
+       ┌────────┴─────────┐
+       ↓                  ↓
+   frontend             server
+       │                  │
+   npm install       py -m venv venv
+       │                  │
+   node_modules       pip install
+       │              requirements.txt
+       │                  │
+   npm run dev       PM2 start
+       │                  │
+       └────────┬─────────┘
+                ↓
+           React + FastAPI
+                ↓
+           PostgreSQL DB
+# மிக முக்கியமான concept
+
+GitHub-ல் dependencies store செய்ய வேண்டாம். Dependency instructions மட்டும் store செய்ய வேண்டும்.
+
+package.json
+package-lock.json
+       ↓
+    npm install
+       ↓
+   node_modules
+
+மற்றும்:
+
+requirements.txt
+       ↓
+pip install -r requirements.txt
+       ↓
+      venv
+
+இதுதான் professional Git workflow. ✅
+
+ஒரு விஷயம் மட்டும் கவனியுங்கள்: புதிய system-ல் frontend/.env மற்றும் server/.env GitHub-ல் இருக்காது. அவற்றை .env.example அடிப்படையில் manually create செய்ய வேண்டும்.
+
+# District Office Login
+
+stalingalaxy@gmail.com / a?H#t7e2
+
+# Board Section Login
+
+tomgalaxytom@gmail.com / GtLA$1!6
+
+#  Sample Table Testing
+
+SELECT * FROM public.users ORDER BY id ASC 
+
+SELECT * FROM public.ewaste_reports ORDER BY id ASC
+
+SELECT * FROM public.biomedical_waste_reports ORDER BY id ASC 
+SELECT * FROM public.plastic_waste_reports ORDER BY id ASC
+
+SELECT * FROM public.waste_reports ORDER BY id ASC 

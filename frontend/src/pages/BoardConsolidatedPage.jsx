@@ -42,14 +42,20 @@ function buildEWasteColumns(onVerify, onReturn) {
   return [
     {
       title: 'DEE OFFICE',
-      dataIndex: 'district_name',
-      key: 'district_name',
-      width: 170,
-      align: 'left',
-      render: (t, r) =>
-        r._isTotal
-          ? <span style={{ fontWeight: 800, color: '#0f172a', fontSize: '13px' }}>TOTAL</span>
-          : <span style={{ fontWeight: 500, color: '#1e293b', fontSize: '13px' }}>{t}</span>,
+      align: 'center',
+      children: [
+        {
+          title: '',
+          dataIndex: 'district_name',
+          key: 'district_name',
+          width: 170,
+          align: 'left',
+          render: (t, r) =>
+            r._isTotal
+              ? <span style={{ fontWeight: 800, color: '#0f172a', fontSize: '13px' }}>TOTAL</span>
+              : <span style={{ fontWeight: 500, color: '#1e293b', fontSize: '13px' }}>{t}</span>,
+        },
+      ],
     },
     {
       title: 'COLLECTED (KG)',
@@ -75,83 +81,95 @@ function buildEWasteColumns(onVerify, onReturn) {
     },
     {
       title: 'STATUS',
-      dataIndex: 'status',
-      key: 'status',
-      width: 130,
       align: 'center',
-      render: (s, r) => r._isTotal ? null : <StatusBadge status={s} />,
+      children: [
+        {
+          title: '',
+          dataIndex: 'status',
+          key: 'status',
+          width: 130,
+          align: 'center',
+          render: (s, r) => r._isTotal ? null : <StatusBadge status={s} />,
+        },
+      ],
     },
     {
       title: 'ACTION',
-      key: 'action',
-      width: 120,
       align: 'center',
-      render: (_, r) => {
-        if (r._isTotal) return null;
-        if (r.status === 'Submitted') return (
-          <Space size={6} style={{ display: 'inline-flex', justifyContent: 'center' }}>
-            <button
-              onClick={() => onVerify(r)}
-              title="Verify"
-              style={{
-                background: '#15803d',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '6px',
-                width: '28px',
-                height: '24px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontWeight: 700,
-              }}
-            >
-              ✓
-            </button>
-            <button
-              onClick={() => onReturn(r)}
-              title="Return"
-              style={{
-                background: '#ffffff',
-                border: '1px solid #fca5a5',
-                color: '#dc2626',
-                borderRadius: '6px',
-                width: '28px',
-                height: '24px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontWeight: 700,
-              }}
-            >
-              ↩
-            </button>
-          </Space>
-        );
-        if (r.status === 'Not Submitted' || !r.status) return (
-          <button
-            onClick={() => message.info(`Window reopened for ${r.district_name}.`)}
-            style={{
-              background: '#ffffff',
-              border: '1px solid #f97316',
-              color: '#ea580c',
-              borderRadius: '6px',
-              padding: '2px 14px',
-              fontSize: '12px',
-              fontWeight: 500,
-              height: '26px',
-              cursor: 'pointer',
-            }}
-          >
-            Reopen
-          </button>
-        );
-        return <span style={{ color: '#94a3b8', fontSize: '13px' }}>—</span>;
-      },
+      children: [
+        {
+          title: '',
+          key: 'action',
+          width: 120,
+          align: 'center',
+          render: (_, r) => {
+            if (r._isTotal) return null;
+            if (r.status === 'Submitted') return (
+              <Space size={6} style={{ display: 'inline-flex', justifyContent: 'center' }}>
+                <button
+                  onClick={() => onVerify(r)}
+                  title="Verify"
+                  style={{
+                    background: '#15803d',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '6px',
+                    width: '28px',
+                    height: '24px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                  }}
+                >
+                  ✓
+                </button>
+                <button
+                  onClick={() => onReturn(r)}
+                  title="Return"
+                  style={{
+                    background: '#ffffff',
+                    border: '1px solid #fca5a5',
+                    color: '#dc2626',
+                    borderRadius: '6px',
+                    width: '28px',
+                    height: '24px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                  }}
+                >
+                  ↩
+                </button>
+              </Space>
+            );
+            if (r.status === 'Not Submitted' || !r.status) return (
+              <button
+                onClick={() => message.info(`Window reopened for ${r.district_name}.`)}
+                style={{
+                  background: '#ffffff',
+                  border: '1px solid #f97316',
+                  color: '#ea580c',
+                  borderRadius: '6px',
+                  padding: '2px 14px',
+                  fontSize: '12px',
+                  fontWeight: 500,
+                  height: '26px',
+                  cursor: 'pointer',
+                }}
+              >
+                Reopen
+              </button>
+            );
+            return <span style={{ color: '#94a3b8', fontSize: '13px' }}>—</span>;
+          },
+        },
+      ],
     },
   ];
 }
@@ -198,13 +216,24 @@ function buildBMWColumns(onVerify, onReturn) {
 function buildPlasticColumns(onVerify, onReturn) {
   return [
     {
-      title: 'DEE OFFICE', dataIndex: 'district_name', key: 'district_name', width: 150, align: 'left',
-      render: (t, r) => r._isTotal
-        ? <span style={{ fontWeight: 800, color: '#0f172a', fontSize: '13px' }}>TOTAL</span>
-        : <span style={{ fontWeight: 500, color: '#1e293b', fontSize: '13px' }}>{t}</span>,
+      title: 'DEE OFFICE',
+      align: 'center',
+      children: [
+        {
+          title: '',
+          dataIndex: 'district_name',
+          key: 'district_name',
+          width: 150,
+          align: 'left',
+          render: (t, r) =>
+            r._isTotal
+              ? <span style={{ fontWeight: 800, color: '#0f172a', fontSize: '13px' }}>TOTAL</span>
+              : <span style={{ fontWeight: 500, color: '#1e293b', fontSize: '13px' }}>{t}</span>,
+        },
+      ],
     },
     {
-      title: 'Collected (Kg)',
+      title: 'COLLECTED (KG)',
       align: 'center',
       children: [
         { title: 'INSPECTIONS', dataIndex: 'inspection_raids_local_bodies', key: 'insp', width: 105, align: 'left', render: (v, r) => r._isTotal ? <strong style={{ fontWeight: 800, color: '#0f172a' }}>{val(v)}</strong> : <span style={{ color: v ? '#1e293b' : '#94a3b8' }}>{val(v)}</span> },
@@ -214,7 +243,7 @@ function buildPlasticColumns(onVerify, onReturn) {
       ],
     },
     {
-      title: 'Recovered (Kg)',
+      title: 'RECOVERED (KG)',
       align: 'center',
       children: [
         { title: 'ACTIVITIES', dataIndex: 'awareness_activities_count', key: 'act', width: 100, align: 'left', render: (v, r) => r._isTotal ? <strong style={{ fontWeight: 800, color: '#0f172a' }}>{val(v)}</strong> : <span style={{ color: v ? '#1e293b' : '#94a3b8' }}>{val(v)}</span> },
@@ -223,24 +252,44 @@ function buildPlasticColumns(onVerify, onReturn) {
         { title: 'BAGS (MVM)', dataIndex: 'cloth_bags_dispensed_mvm', key: 'bags', width: 100, align: 'left', render: (v, r) => r._isTotal ? <strong style={{ fontWeight: 800, color: '#0f172a' }}>{val(v)}</strong> : <span style={{ color: v ? '#1e293b' : '#94a3b8' }}>{val(v)}</span> },
       ],
     },
-    { title: 'ANN-I', dataIndex: 'annexure1_status', key: 'a1', width: 85, align: 'center', render: (s, r) => r._isTotal ? null : <StatusBadge status={s} /> },
-    { title: 'ANN-II', dataIndex: 'annexure2_status', key: 'a2', width: 85, align: 'center', render: (s, r) => r._isTotal ? null : <StatusBadge status={s} /> },
-    { title: 'STATUS', dataIndex: 'status', key: 'status', width: 120, align: 'center', render: (s, r) => r._isTotal ? null : <StatusBadge status={s} /> },
     {
-      title: 'ACTION', key: 'action', width: 120, align: 'center',
-      render: (_, r) => {
-        if (r._isTotal) return null;
-        if (r.status === 'Submitted') return (
-          <Space size={6} style={{ display: 'inline-flex', justifyContent: 'center' }}>
-            <button onClick={() => onVerify(r)} title="Verify" style={{ background: '#15803d', color: '#fff', border: 'none', borderRadius: '6px', width: '28px', height: '24px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '13px', fontWeight: 700 }}>✓</button>
-            <button onClick={() => onReturn(r)} title="Return" style={{ background: '#fff', border: '1px solid #fca5a5', color: '#dc2626', borderRadius: '6px', width: '28px', height: '24px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '13px', fontWeight: 700 }}>↩</button>
-          </Space>
-        );
-        if (r.status === 'Not Submitted' || !r.status) return (
-          <button onClick={() => message.info(`Window reopened for ${r.district_name}.`)} style={{ background: '#fff', border: '1px solid #f97316', color: '#ea580c', borderRadius: '6px', padding: '2px 14px', fontSize: '12px', fontWeight: 500, height: '26px', cursor: 'pointer' }}>Reopen</button>
-        );
-        return <span style={{ color: '#94a3b8', fontSize: '13px' }}>—</span>;
-      },
+      title: 'STATUS',
+      align: 'center',
+      children: [
+        {
+          title: '',
+          dataIndex: 'status',
+          key: 'status',
+          width: 120,
+          align: 'center',
+          render: (s, r) => r._isTotal ? null : <StatusBadge status={s} />,
+        },
+      ],
+    },
+    {
+      title: 'ACTION',
+      align: 'center',
+      children: [
+        {
+          title: '',
+          key: 'action',
+          width: 120,
+          align: 'center',
+          render: (_, r) => {
+            if (r._isTotal) return null;
+            if (r.status === 'Submitted') return (
+              <Space size={6} style={{ display: 'inline-flex', justifyContent: 'center' }}>
+                <button onClick={() => onVerify(r)} title="Verify" style={{ background: '#15803d', color: '#fff', border: 'none', borderRadius: '6px', width: '28px', height: '24px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '13px', fontWeight: 700 }}>✓</button>
+                <button onClick={() => onReturn(r)} title="Return" style={{ background: '#fff', border: '1px solid #fca5a5', color: '#dc2626', borderRadius: '6px', width: '28px', height: '24px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '13px', fontWeight: 700 }}>↩</button>
+              </Space>
+            );
+            if (r.status === 'Not Submitted' || !r.status) return (
+              <button onClick={() => message.info(`Window reopened for ${r.district_name}.`)} style={{ background: '#fff', border: '1px solid #f97316', color: '#ea580c', borderRadius: '6px', padding: '2px 14px', fontSize: '12px', fontWeight: 500, height: '26px', cursor: 'pointer' }}>Reopen</button>
+            );
+            return <span style={{ color: '#94a3b8', fontSize: '13px' }}>—</span>;
+          },
+        },
+      ],
     },
   ];
 }
