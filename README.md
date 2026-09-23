@@ -699,6 +699,10 @@ CMD 2 — React
 cd D:\xampp\htdocs\reportingportal\frontend
 npm run dev
 
+CMD 3 — Email Automation Cm Dashboard Code Run
+cd D:\xampp\htdocs\reportingportal\email_automation_cmdashboard
+python app.py
+
 பிறகு:
 
 React
