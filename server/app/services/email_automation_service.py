@@ -99,7 +99,7 @@ def add_log(recipient_name, recipient_email, subject, status, error_message=None
         cursor.execute('''
             INSERT INTO logs (timestamp, recipient_name, recipient_email, subject, status, error_message)
             VALUES (%s, %s, %s, %s, %s, %s)
-        ''', (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), recipient_name, recipient_email, subject, status, error_message))
+        ''', (datetime.now().strftime('%d-%m-%Y %H:%M:%S'), recipient_name, recipient_email, subject, status, error_message))
         conn.commit()
         cursor.close()
         conn.close()
@@ -111,9 +111,20 @@ def get_logs(limit=100):
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
-        cursor.execute('SELECT * FROM logs ORDER BY timestamp DESC LIMIT %s', (limit,))
+        cursor.execute('SELECT * FROM logs ORDER BY id DESC LIMIT %s', (limit,))
         rows = cursor.fetchall()
-        logs = [dict(row) for row in rows]
+        logs = []
+        for row in rows:
+            d = dict(row)
+            ts = d.get('timestamp')
+            if ts:
+                try:
+                    # Convert any YYYY-MM-DD format to DD-MM-YYYY
+                    dt = datetime.strptime(ts, '%Y-%m-%d %H:%M:%S')
+                    d['timestamp'] = dt.strftime('%d-%m-%Y %H:%M:%S')
+                except Exception:
+                    pass
+            logs.append(d)
         cursor.close()
         conn.close()
         return logs

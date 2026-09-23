@@ -19,12 +19,11 @@ const { Content } = Layout;
 function MainAppLayout() {
   const location = useLocation();
 
-  // Hide the public portal Navbar & Footer on Dashboard, Entry, and Login pages
+  // Hide the public portal Navbar & Footer on Dashboard and Entry pages
   const isInternalOrAuthPage =
     location.pathname.startsWith('/district') ||
     location.pathname === '/board-dashboard' ||
-    location.pathname.startsWith('/board/') ||
-    location.pathname === '/login';
+    location.pathname.startsWith('/board/');
 
   return (
     <Layout style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#f5f7fa' }}>

@@ -354,7 +354,7 @@ async function fetchLogs(isSilent = false) {
             const errorText = l.error_message ? l.error_message : '-';
             return `
                 <tr>
-                    <td>${l.timestamp}</td>
+                    <td>${formatTimestamp(l.timestamp)}</td>
                     <td><strong>${l.recipient_name || '-'}</strong></td>
                     <td>${l.recipient_email}</td>
                     <td>${escapeHtml(l.subject)}</td>
@@ -397,8 +397,8 @@ async function fetchSchedules(isSilent = false) {
                         <td>${escapeHtml(s.subject)}</td>
                         <td><span class="badge ${typeClass}">${s.schedule_type}</span></td>
                         <td><code>${s.schedule_time}</code></td>
-                        <td><code>${s.next_run || '-'}</code></td>
-                        <td><code>${s.last_run || '-'}</code></td>
+                        <td><code>${formatTimestamp(s.next_run)}</code></td>
+                        <td><code>${formatTimestamp(s.last_run)}</code></td>
                         <td>
                             <label class="switch">
                                 <input type="checkbox" ${checked} onchange="toggleSchedule(${s.id}, this.checked)">
@@ -854,7 +854,7 @@ async function fetchUsers(isSilent = false) {
                     <td>
                         <code class="hash-code" title="${escapeHtml(fullHash)}">${escapeHtml(hashSnippet)}</code>
                     </td>
-                    <td><span class="text-muted">${u.created_at || '-'}</span></td>
+                    <td><span class="text-muted">${formatTimestamp(u.created_at)}</span></td>
                     <td class="text-right">
                         <button class="btn btn-outline btn-xs" style="border-color: var(--color-danger); color: var(--color-danger);" onclick="deleteUser(${u.id}, '${escapeHtml(u.officer_email)}')">
                             <i data-lucide="trash-2"></i> Delete
@@ -925,4 +925,17 @@ function escapeHtml(unsafe) {
          .replace(/"/g, "&quot;")
          .replace(/'/g, "&#039;");
 }
+
+// Format timestamp to dd-mm-yyyy HH:MM:SS
+function formatTimestamp(ts) {
+    if (!ts || ts === '-' || ts === 'None') return '-';
+    const str = String(ts).trim();
+    const isoMatch = str.match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}:\d{2}:\d{2}))?/);
+    if (isoMatch) {
+        const [_, yyyy, mm, dd, time] = isoMatch;
+        return time ? `${dd}-${mm}-${yyyy} ${time}` : `${dd}-${mm}-${yyyy}`;
+    }
+    return str;
+}
+
 

@@ -305,7 +305,7 @@ export default function LoginPage() {
         {/* Footer Links */}
         <div style={{ textAlign: 'center', fontSize: '13px', color: '#64748b' }}>
           <div style={{ marginBottom: '6px' }}>
-            Don't have an account?{' '}
+            {/* Don't have an account?{' '}
             <a
               id="register-link"
               onClick={(e) => {
@@ -320,7 +320,7 @@ export default function LoginPage() {
               }}
             >
               Register
-            </a>
+            </a> */}
           </div>
           <div>
             Forgot password?{' '}
